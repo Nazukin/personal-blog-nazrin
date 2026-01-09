@@ -1,0 +1,18 @@
+{
+  "name": "personal-blog-nazrin",
+  "version": "1.0.0",
+  "description": "- Build a personal blog for two user types: **guest** and **admin**\r   - Guest: can view the home page and article pages (read-only)\r   - Admin: can do everything a guest can, plus add new articles and edit existing articles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11"
+  }
+}
