@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Add Article</title>
+    <link rel="stylesheet" href="/styles/home.css">
+</head>
+<body>
+    <%- include('../partials/header',{hideAddButton: true}) %>
+    <div class="content-add">
+        <form action="/admin/addarticle" method="post">
+            <label for="title">Title</label>
+            <br>
+            <input type="text" name="title" id="title" required>
+            <br>
+            <label for="content">Content</label>
+            <br>
+            <textarea name="content" id="content" rows="10" required></textarea>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>

@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Home</title>
-    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
-    <h1>Nazrin- Personal Blog</h1>
-    <h3>Admin side</h3>
+    <%- include('../partials/header',{hideAddButton: false}) %>
+    <div class="content">
+        <!-- looping content dari article.json -->
+    </div>
 </body>
 </html>
