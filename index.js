@@ -9,6 +9,7 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true })); 
 
 const articlesDir = path.join(__dirname,'articles')
+const articlesFile = path.join(articlesDir, 'articles.json') // <-- single JSON "database"
 
 //Guest route
 app.get('/',(req,res)=>{
@@ -16,13 +17,42 @@ app.get('/',(req,res)=>{
 })
 
 app.get(`/article/`,(req,res)=>{
-
+    
 })
 
 //Admin route
-app.get('/admin',(req,res)=>{
+app.get('/admin',async(req,res)=>{
     //ambil artikel dari JSON articles dan tampilkan ke admin
-    res.render('admin/index')
+    try{
+        let articles = []
+        try{
+            const data = await fs.readFile(articlesFile)
+            articles = JSON.parse(data || '[]')
+            if(!Array.isArray(articles)) articles = []
+        }catch(e){
+            articles = []
+        }
+        res.render('admin/index',{articles})
+    }catch(e){
+        console.error(e)
+        res.status(500).send('Failed to load articles')
+    }
+})
+
+app.get('/admin/article/:id',async(req,res)=>{
+    const id = Number(req.params.id)
+    if(!Number.isInteger(id) || id <= 0) return res.status(400).send('invalid id')
+    
+    try{
+        const data = await fs.readFile(articlesFile,'utf-8')
+        const articles = JSON.parse(data || '[]')
+        const article = Array.isArray(articles) ? articles.find(a => Number(a.id) === id) : null
+        if(!article) return res.status(404).send('Article Not Found')
+        return res.render('admin/article',{article})
+    }catch(err){
+        console.error(err)
+        return res.status(500).send('Failed to load article')
+    }
 })
 
 app.get('/admin/addarticle',(req,res)=>{
@@ -37,11 +67,18 @@ app.post('/admin/addarticle',async (req,res)=>{
     try{
         await fs.mkdir(articlesDir,{recursive:true})
 
-        const files = await fs.readdir(articlesDir)
-        const ids = files
-            .map(f => parseInt(path.parse(f).name,10))
-            .filter(n => !isNaN(n))
-        const maxId = ids.length ? Math.max(...ids) : 0
+        // read existing articles array from single file
+        let articles = []
+        try {
+            const data = await fs.readFile(articlesFile, 'utf8')
+            articles = JSON.parse(data || '[]')
+            if (!Array.isArray(articles)) articles = []
+        } catch (err) {
+            // file missing or invalid -> start with empty array
+            articles = []
+        }
+
+        const maxId = articles.reduce((m,a) => Math.max(m, Number(a.id) || 0), 0)
         const id = maxId + 1
 
         const article = {
@@ -51,8 +88,8 @@ app.post('/admin/addarticle',async (req,res)=>{
             date: new Date().toISOString()
         }
 
-        const filePath = path.join(articlesDir,`${id}.json`)
-        await fs.writeFile(filePath,JSON.stringify(article,null,2),'utf-8')
+        articles.push(article)
+        await fs.writeFile(articlesFile, JSON.stringify(articles,null,2),'utf8')
 
         res.redirect('/admin')
     } catch(err){
