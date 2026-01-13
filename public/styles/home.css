@@ -19,3 +19,19 @@
     margin-top: 25px;
     margin-right: 7.5px;
 }
+.header a{
+    text-decoration: none;
+}
+.header a:visited{
+    color: black;
+}
+.content h1{
+    text-align: center;
+}
+.content h3{
+    text-align: center;
+}
+.content p{
+    text-align:justify;
+    padding: 0px 200px;
+}

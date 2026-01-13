@@ -11,10 +11,11 @@
     <div class="content">
         <!-- looping content dari article.json -->
         <% if(articles && articles.length){%>
-            <% articles.forEach(function(a){%>
+            <% articles.forEach(function(article){%>
                 <article>
-                    <h2><%= a.title%></h2>
-                    <p><small><%= new Date(a.date).toLocaleString() %></small></p>
+                    <h2><%= article.title%></h2>
+                    <p><small><%= new Date(article.date).toLocaleString() %></small></p>
+                    <a href="/admin/article/<%= article.id %>">Read More</a>
                 </article>
             <%})%>
         <%}%>
