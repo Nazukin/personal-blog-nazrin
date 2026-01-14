@@ -11,6 +11,34 @@ app.use(express.urlencoded({ extended: true }));
 const articlesDir = path.join(__dirname,'articles')
 const articlesFile = path.join(articlesDir, 'articles.json') // <-- single JSON "database"
 
+//Basic Auth
+
+function adminAuth(req,res,next){
+    const authheader = req.headers.authorization
+    console.log(req.headers)
+
+    if(!authheader){
+        let err = new Error('Anda tidak boleh masuk laman admin')
+        res.setHeader('WWW-Authenticate','Basic')
+        err.status = 401
+        return next(err)
+    }
+
+    const auth = new Buffer.from(authheader.split(' ')[1],
+        'base64').toString().split(':')
+    const user = auth[0]
+    const pass = auth[1]
+
+    if(user == 'admin' && pass == 'admin'){
+        next()
+    }else{
+        let err = new Error('Nama atau password salah')
+        res.setHeader('WWW-Authenticate','Basic')
+        err.status = 401
+        return next(err)
+    }
+}
+
 //Guest route
 app.get('/',async(req,res)=>{
     try{
@@ -46,7 +74,7 @@ app.get(`/article/:id`,async(req,res)=>{
 })
 
 //Admin route
-app.get('/admin',async(req,res)=>{
+app.get('/admin',adminAuth,async(req,res)=>{
     //ambil artikel dari JSON articles dan tampilkan ke admin
     try{
         let articles = []
@@ -64,7 +92,7 @@ app.get('/admin',async(req,res)=>{
     }
 })
 
-app.get('/admin/article/:id',async(req,res)=>{
+app.get('/admin/article/:id',adminAuth,async(req,res)=>{
     const id = Number(req.params.id)
     if(!Number.isInteger(id) || id <= 0) return res.status(400).send('invalid id')
     
@@ -80,7 +108,7 @@ app.get('/admin/article/:id',async(req,res)=>{
     }
 })
 
-app.get('/admin/addarticle',(req,res)=>{
+app.get('/admin/addarticle',adminAuth,(req,res)=>{
     res.render('admin/addarticle')
 })
 
