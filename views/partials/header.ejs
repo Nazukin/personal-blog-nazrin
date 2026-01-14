@@ -1,6 +1,11 @@
 <div class="header">
-    <h1>Nazrin - Personal Blog</h1>
-    <h3>Admin side</h3>
+    <% if(!admin){%>
+    <h1><a href="/">Nazrin - Personal Blog</a></h1>
+    <h3>User side</h3>
+    <% } else { %>
+    <h1><a href="/admin">Nazrin - Personal Blog</a></h1>
+    <h3>Admin Side</h3>
+    <% } %>
     <% if (!hideAddButton) { %>
     <button type="button" class="add-btn">
         <a href="/admin/addarticle">Add new article</a>

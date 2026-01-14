@@ -1,1 +1,24 @@
-<h1>Hello Guest</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Home</title>
+    <link rel="stylesheet" href="/styles/home.css">
+</head>
+<body>
+    <%- include('../partials/header',{hideAddButton: true, admin: false}) %>
+    <div class="content">
+        <!-- looping content dari article.json -->
+        <% if(articles && articles.length){%>
+            <% articles.forEach(function(article){%>
+                <article>
+                    <h2><%= article.title%></h2>
+                    <p><small><%= new Date(article.date).toLocaleString() %></small></p>
+                    <a href="/article/<%= article.id %>">Read More</a>
+                </article>
+            <%})%>
+        <%}%>
+    </div>
+</body>
+</html>

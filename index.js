@@ -12,12 +12,37 @@ const articlesDir = path.join(__dirname,'articles')
 const articlesFile = path.join(articlesDir, 'articles.json') // <-- single JSON "database"
 
 //Guest route
-app.get('/',(req,res)=>{
-    res.render('guest/index')
+app.get('/',async(req,res)=>{
+    try{
+        let articles = []
+        try{
+            const data = await fs.readFile(articlesFile)
+            articles = JSON.parse(data || '[]')
+            if(!Array.isArray(articles)) articles = []
+        }catch(e){
+            articles = []
+        }
+        res.render('guest/index',{articles})
+    }catch(e){
+        console.error(e)
+        res.status(500).send('Failed to load articles')
+    }
 })
 
-app.get(`/article/`,(req,res)=>{
+app.get(`/article/:id`,async(req,res)=>{
+    const id = Number(req.params.id)
+    if(!Number.isInteger(id) || id <= 0) return res.status(400).send('invalid id')
     
+    try{
+        const data = await fs.readFile(articlesFile,'utf-8')
+        const articles = JSON.parse(data || '[]')
+        const article = Array.isArray(articles) ? articles.find(a => Number(a.id) === id) : null
+        if(!article) return res.status(404).send('Article Not Found')
+        return res.render('admin/article',{article})
+    }catch(err){
+        console.error(err)
+        return res.status(500).send('Failed to load article')
+    }
 })
 
 //Admin route

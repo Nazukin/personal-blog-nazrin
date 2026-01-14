@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles/home.css">
 </head>
 <body>
-    <%- include('../partials/header',{hideAddButton: false}) %>
+    <%- include('../partials/header',{hideAddButton: false, admin: true}) %>
     <div class="content">
         <!-- looping content dari article.json -->
         <% if(articles && articles.length){%>

@@ -25,13 +25,13 @@
 .header a:visited{
     color: black;
 }
-.content h1{
+.content-partial h1{
     text-align: center;
 }
-.content h3{
+.content-partial h3{
     text-align: center;
 }
-.content p{
+.content-partial p{
     text-align:justify;
     padding: 0px 200px;
 }
