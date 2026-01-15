@@ -58,7 +58,7 @@ app.get('/',async(req,res)=>{
 })
 
 app.get(`/article/:id`,async(req,res)=>{
-    const id = Number(req.params.id)
+    const id = Number(req.params.id) //cek id ada atau nggak
     if(!Number.isInteger(id) || id <= 0) return res.status(400).send('invalid id')
     
     try{
@@ -151,12 +151,46 @@ app.post('/admin/addarticle',async (req,res)=>{
     }
 })
 
-app.get('/admin/editarticle',(req,res)=>{
-
+app.get('/admin/editarticle/:id',adminAuth,async(req,res)=>{
+    const id = Number(req.params.id)
+    if(!Number.isInteger(id) || id <= 0) return res.status(400).send('invalid id')
+    try{
+        const data = await fs.readFile(articlesFile,'utf-8')
+        const articles = JSON.parse(data || '[]')
+        const article = Array.isArray(articles) ? articles.find(a => Number(a.id) === id) : null
+        if(!article) return res.status(404).send('Article Not Found')
+        return res.render('admin/editarticle',{article})
+    }catch(err){
+        console.error(err)
+        return res.status(500).send('Failed to load article')
+    }
 })
 
-app.patch('/admin/editarticle',(req,res)=>{
+app.post('/admin/editarticle/:id',async(req,res)=>{
+    const {id,title,content} = req.body
+    const idNum = Number(id)
+    if(!Number.isInteger(idNum) || idNum <= 0) return res.status(400).send('invalid id')
+    if(!title || !content) return res.status(400).send('content and title needed')
+    
+    try{
+        const data = await fs.readFile(articlesFile,'utf-8')
+        let articles = JSON.parse(data || '[]')
+        if(!Array.isArray(articles)) articles = []
 
+        const article = articles.find(a => Number(a.id) === idNum)
+        if(!article) return res.status(404).send('Article not found')
+
+        article.title = title
+        article.content = content
+        article.updated_date = new Date().toISOString()
+
+        await fs.writeFile(articlesFile,JSON.stringify(articles,null,2),'utf-8')
+
+        res.redirect('/admin')
+    }catch(err){
+        Console.error(err)
+        res.status(500).send('Failed to update article')
+    }
 })
 
 app.listen(port, ()=>{

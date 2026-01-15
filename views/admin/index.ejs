@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Home</title>
-    <link rel="stylesheet" href="styles/home.css">
+    <link rel="stylesheet" href="/styles/home.css">
 </head>
 <body>
     <%- include('../partials/header',{hideAddButton: false, admin: true}) %>
@@ -16,6 +16,8 @@
                     <h2><%= article.title%></h2>
                     <p><small><%= new Date(article.date).toLocaleString() %></small></p>
                     <a href="/admin/article/<%= article.id %>">Read More</a>
+                    <br>
+                    <a href="/admin/editarticle/<%= article.id %>">Edit</a>
                 </article>
             <%})%>
         <%}%>
